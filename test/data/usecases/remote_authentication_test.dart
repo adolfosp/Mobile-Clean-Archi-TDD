@@ -49,13 +49,28 @@ void main() {
     expect(future, throwsA(DomainError.unexpected));
   });
 
-    test('should throw UnexpectedError if httpClient returns 404', () async {
+  test('should throw UnexpectedError if httpClient returns 404', () async {
     //Arrange
     when(httpClient.request(
             url: anyNamed('url'),
             method: anyNamed('method'),
             body: anyNamed('body')))
         .thenThrow(HttpError.notFound);
+
+    //Act
+    final future = sut.auth(params);
+
+    //Assert
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('should throw UnexpectedError if httpClient returns 500', () async {
+    //Arrange
+    when(httpClient.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenThrow(HttpError.serverError);
 
     //Act
     final future = sut.auth(params);
