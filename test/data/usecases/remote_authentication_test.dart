@@ -24,6 +24,12 @@ void main() {
 
   test('should call http client with correct values', () async {
     //Act
+    when(httpClient.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenAnswer((realInvocation) async =>
+            {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
 
     await sut.auth(params);
 
@@ -93,5 +99,22 @@ void main() {
 
     //Assert
     expect(future, throwsA(DomainError.invalidCredential));
+  });
+
+  test('should return an account if httpclient returns 200', () async {
+    //Arrange
+    final accountToken = faker.guid.guid();
+    when(httpClient.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenAnswer((realInvocation) async =>
+            {'accessToken': accountToken, 'name': faker.person.name()});
+
+    //Act
+    final account = await sut.auth(params);
+
+    //Assert
+    expect(account.token, accountToken);
   });
 }
