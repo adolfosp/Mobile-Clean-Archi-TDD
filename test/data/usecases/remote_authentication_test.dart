@@ -117,4 +117,23 @@ void main() {
     //Assert
     expect(account.token, accountToken);
   });
+
+  test(
+      'should throw unexpectedError if httpclient returns 200 with invalid data',
+      () async {
+    //Arrange
+    when(httpClient.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenAnswer((realInvocation) async => {
+              'invalid_key': 'accountToken',
+            });
+
+    //Act
+    final account = sut.auth(params);
+
+    //Assert
+    expect(account, throwsA(DomainError.unexpected));
+  });
 }
