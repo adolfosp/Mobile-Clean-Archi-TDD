@@ -1,3 +1,4 @@
+import 'package:mobile_clean_tdd/data/models/models.dart';
 import 'package:mobile_clean_tdd/domain/entities/entities.dart';
 import 'package:mobile_clean_tdd/domain/helpers/domain_error.dart';
 import 'package:mobile_clean_tdd/domain/usecases/authentication.dart';
@@ -15,7 +16,7 @@ class RemoteAuthentication {
           url: url,
           method: 'post',
           body: RemoteAuthenticationParams.fromDomain(params).toJson());
-          return AccountEntity.fromJson(httpResponse);
+      return RemoteAccountModel.fromJson(httpResponse).toEntity();
     } on HttpError catch (error) {
       throw error == HttpError.unauthorized
           ? DomainError.invalidCredential
